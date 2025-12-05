@@ -12,6 +12,10 @@ const __dirname = path.dirname(__filename);
 // Ajuste para subir um nível e acessar a pasta dist na raiz do projeto
 const distPath = path.join(__dirname, '..', 'dist');
 
+console.log('Iniciando servidor...');
+console.log('Diretório base (__dirname):', __dirname);
+console.log('Caminho do Frontend (dist):', distPath);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
