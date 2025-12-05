@@ -1,0 +1,13 @@
+
+services:
+  - type: web
+    name: app-email-automacao
+    env: docker
+    region: oregon
+    plan: free
+    branch: main
+    numInstances: 1
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 10000
