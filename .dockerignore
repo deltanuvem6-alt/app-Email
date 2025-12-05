@@ -1,0 +1,7 @@
+
+node_modules
+dist
+.env
+.git
+.gitignore
+server/temp_email_sender.py
