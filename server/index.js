@@ -6,6 +6,7 @@ import { writeFile } from 'fs/promises';
 import { spawn } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import os from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,7 +33,7 @@ app.post('/api/execute-python', async (req, res) => {
         return res.status(400).json({ error: 'Nenhum script fornecido' });
     }
 
-    const tempFilePath = path.join(__dirname, 'temp_email_sender.py');
+    const tempFilePath = path.join(os.tmpdir(), 'temp_email_sender.py');
 
     try {
         // Salvar o script em um arquivo
