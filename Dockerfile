@@ -1,31 +1,44 @@
 
-# Usar uma imagem base que tenha Node.js (Debian based)
+# --- Estágio 1: Build do Frontend ---
+FROM node:18-slim AS builder
+
+WORKDIR /app
+
+# Copiar dependências
+COPY package*.json ./
+
+# Instalar TODAS as dependências (incluindo devDependencies para o build)
+RUN npm install
+
+# Copiar código fonte
+COPY . .
+
+# Buildar o projeto (Vite gera a pasta /app/dist)
+RUN npm run build
+
+# --- Estágio 2: Runtime (Servidor) ---
 FROM node:18-slim
 
-# Instalar Python 3 e o pacote que cria o alias 'python' -> 'python3'
+# Instalar Python para a automação
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python-is-python3 \
     && rm -rf /var/lib/apt/lists/*
 
-# Definir diretório de trabalho
 WORKDIR /app
 
-# Copiar arquivos de dependência
-COPY package*.json ./
+# Copiar apenas arquivos necessários da etapa de build
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/server ./server
+COPY --from=builder /app/node_modules ./node_modules
 
-# Instalar dependências do Node
-RUN npm install
+# Definir variável de ambiente padrão
+ENV PORT=10000
 
-# Copiar o resto do código fonte
-COPY . .
+# Expor a porta
+EXPOSE 10000
 
-# Buildar o frontend (Vite)
-RUN npm run build
-
-# Expor a porta 10000 (padrão do Render no nosso yaml) e 3000 (local)
-EXPOSE 10000 3000
-
-# Comando para iniciar o servidor
+# Iniciar servidor
 CMD ["node", "server/index.js"]
